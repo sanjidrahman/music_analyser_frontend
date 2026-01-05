@@ -315,87 +315,92 @@ const Results = () => {
 
           {/* Pitch Comparison Chart */}
           {pitchChartData.length > 0 && (
-            <div className="rounded-xl border border-border bg-gradient-card p-8">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-semibold">Pitch Comparison Over Time</h3>
-                <div className="flex items-center gap-6 text-sm">
+            <div className="rounded-xl border border-border bg-gradient-card p-4 md:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 md:mb-8 gap-4">
+                <h3 className="text-lg md:text-xl font-semibold">Pitch Comparison Over Time</h3>
+                <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-2 text-xs md:text-sm">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-1 rounded-full bg-primary" />
+                    <div className="w-3 h-1 md:w-4 md:h-1 rounded-full bg-primary" />
                     <span className="text-muted-foreground">Reference</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-1 rounded-full" style={{ backgroundColor: 'hsl(280, 70%, 60%)' }} />
+                    <div className="w-3 h-1 md:w-4 md:h-1 rounded-full" style={{ backgroundColor: 'hsl(280, 70%, 60%)' }} />
                     <span className="text-muted-foreground">Your Pitch</span>
                   </div>
                 </div>
               </div>
-              <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={pitchChartData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
-                  <defs>
-                    <linearGradient id="refPitchGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="userPitchGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(280, 70%, 60%)" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="hsl(280, 70%, 60%)" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid 
-                    strokeDasharray="3 3" 
-                    stroke="hsl(var(--border))" 
-                    opacity={0.5}
-                    vertical={false}
-                  />
-                  <XAxis 
-                    dataKey="time" 
-                    stroke="hsl(var(--muted-foreground))" 
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={{ stroke: 'hsl(var(--border))' }}
-                    label={{ value: 'Time (seconds)', position: 'insideBottom', offset: -15, fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
-                    tickMargin={10}
-                  />
-                  <YAxis 
-                    stroke="hsl(var(--muted-foreground))" 
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={{ stroke: 'hsl(var(--border))' }}
-                    label={{ value: 'Pitch (Hz)', angle: -90, position: 'insideLeft', offset: 10, fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
-                    tickMargin={10}
-                    domain={['dataMin - 20', 'dataMax + 20']}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: 'hsl(var(--card))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '0.75rem',
-                      padding: '12px 16px',
-                      boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.2)',
-                    }}
-                    labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 600, marginBottom: '8px' }}
-                    itemStyle={{ padding: '2px 0' }}
-                    formatter={(value: number) => [`${value} Hz`, '']}
-                    labelFormatter={(label) => `Time: ${label}s`}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="Reference Pitch"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={2.5}
-                    dot={false}
-                    activeDot={{ r: 6, strokeWidth: 2, fill: 'hsl(var(--background))' }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="Your Pitch"
-                    stroke="hsl(280, 70%, 60%)"
-                    strokeWidth={2.5}
-                    dot={false}
-                    activeDot={{ r: 6, strokeWidth: 2, fill: 'hsl(var(--background))' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <div className="w-full" style={{ height: '250px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={pitchChartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                    <defs>
+                      <linearGradient id="refPitchGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="userPitchGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(280, 70%, 60%)" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(280, 70%, 60%)" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="hsl(var(--border))"
+                      opacity={0.5}
+                      vertical={false}
+                    />
+                    <XAxis
+                      dataKey="time"
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={{ stroke: 'hsl(var(--border))' }}
+                      label={{ value: 'Time (s)', position: 'insideBottom', offset: -8, fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                      tickMargin={8}
+                      interval="preserveStartEnd"
+                    />
+                    <YAxis
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={{ stroke: 'hsl(var(--border))' }}
+                      label={{ value: 'Pitch (Hz)', angle: -90, position: 'insideLeft', offset: 0, fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                      tickMargin={8}
+                      domain={['dataMin - 20', 'dataMax + 20']}
+                      width={45}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '0.5rem',
+                        padding: '8px 12px',
+                        boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.2)',
+                        fontSize: '12px',
+                      }}
+                      labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 600, marginBottom: '4px' }}
+                      itemStyle={{ padding: '1px 0' }}
+                      formatter={(value: number) => [`${value} Hz`, '']}
+                      labelFormatter={(label) => `Time: ${label}s`}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="Reference Pitch"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={2}
+                      dot={false}
+                      activeDot={{ r: 4, strokeWidth: 2, fill: 'hsl(var(--background))' }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="Your Pitch"
+                      stroke="hsl(280, 70%, 60%)"
+                      strokeWidth={2}
+                      dot={false}
+                      activeDot={{ r: 4, strokeWidth: 2, fill: 'hsl(var(--background))' }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           )}
 

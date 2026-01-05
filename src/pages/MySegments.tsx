@@ -109,14 +109,14 @@ const MySegments = () => {
 
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gradient mb-2">My Segments</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gradient mb-2">My Segments</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">
                 Select an existing segment to practice or upload a new song
               </p>
             </div>
-            <Button onClick={() => navigate('/')} className="gap-2">
+            <Button onClick={() => navigate('/')} className="gap-2 w-full sm:w-auto">
               <Music className="h-4 w-4" />
               Upload New
             </Button>
@@ -144,23 +144,23 @@ const MySegments = () => {
                   key={segment.id}
                   className="bg-gradient-card border-border hover:border-primary/50 transition-colors"
                 >
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className="rounded-lg bg-primary/10 p-3 shrink-0">
-                          <Music className="h-6 w-6 text-primary" />
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                        <div className="rounded-lg bg-primary/10 p-2 sm:p-3 shrink-0">
+                          <Music className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-semibold truncate" title={segment.original_filename}>
+                          <h3 className="font-semibold text-sm sm:text-base truncate" title={segment.original_filename}>
                             {segment.original_filename}
                           </h3>
-                          <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1 text-xs sm:text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
-                              <Clock className="h-3.5 w-3.5" />
+                              <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                               {formatTime(segment.start_time)} - {formatTime(segment.end_time)} ({segment.duration}s)
                             </span>
                             <span className="flex items-center gap-1">
-                              <Calendar className="h-3.5 w-3.5" />
+                              <Calendar className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                               {formatDate(segment.created_at)}
                             </span>
                           </div>
@@ -172,10 +172,10 @@ const MySegments = () => {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0 ml-4">
+                      <div className="flex items-center gap-2 shrink-0 sm:ml-4">
                         <Button
                           onClick={() => handleSelectSegment(segment)}
-                          className="gap-2"
+                          className="gap-2 flex-1 sm:flex-auto text-sm sm:text-base"
                         >
                           <Play className="h-4 w-4" />
                           Practice
@@ -185,7 +185,7 @@ const MySegments = () => {
                             <Button
                               variant="outline"
                               size="icon"
-                              className="text-destructive hover:text-destructive"
+                              className="text-destructive hover:text-destructive shrink-0"
                               disabled={deletingId === segment.id}
                             >
                               {deletingId === segment.id ? (

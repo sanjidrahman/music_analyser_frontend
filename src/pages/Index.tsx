@@ -179,24 +179,24 @@ const Index = () => {
 
         {/* Upload Section */}
         <div className="max-w-3xl mx-auto">
-          <div className="rounded-2xl border border-border bg-gradient-card p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <Music className="h-6 w-6 text-primary" />
-              <h2 className="text-2xl font-bold">Upload Your Song</h2>
+          <div className="rounded-2xl border border-border bg-gradient-card p-4 md:p-8">
+            <div className="flex items-center gap-3 mb-4 md:mb-6">
+              <Music className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+              <h2 className="text-xl md:text-2xl font-bold">Upload Your Song</h2>
             </div>
 
             <FileUpload onFileSelect={handleFileSelect} />
 
             {selectedFile && (
-              <div className="mt-6 space-y-6">
-                <div className="p-4 rounded-lg bg-secondary/50 border border-border">
-                  <div className="flex items-center gap-4">
-                    <div className="rounded-lg bg-primary/10 p-3">
-                      <Music className="h-6 w-6 text-primary" />
+              <div className="mt-4 md:mt-6 space-y-4 md:space-y-6">
+                <div className="p-3 md:p-4 rounded-lg bg-secondary/50 border border-border">
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <div className="rounded-lg bg-primary/10 p-2 md:p-3">
+                      <Music className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                     </div>
-                    <div>
-                      <p className="font-semibold">{selectedFile.name}</p>
-                      <p className="text-sm text-muted-foreground">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-sm md:text-base truncate">{selectedFile.name}</p>
+                      <p className="text-xs md:text-sm text-muted-foreground">
                         {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                       </p>
                     </div>
@@ -207,27 +207,30 @@ const Index = () => {
                   <h3 className="text-lg font-semibold mb-4">
                     Select Segment Duration
                   </h3>
-                  <div className="flex gap-3 mb-6">
+                  <div className="grid grid-cols-3 gap-3 mb-6">
                     <Button
                       onClick={() => handleDurationSelect(15)}
                       variant={selectedDuration === 15 ? "default" : "outline"}
                       size="lg"
+                      className="text-sm md:text-base"
                     >
-                      15 seconds
+                      15s
                     </Button>
                     <Button
                       onClick={() => handleDurationSelect(30)}
                       variant={selectedDuration === 30 ? "default" : "outline"}
                       size="lg"
+                      className="text-sm md:text-base"
                     >
-                      30 seconds
+                      30s
                     </Button>
                     <Button
                       onClick={() => handleDurationSelect(60)}
                       variant={selectedDuration === 60 ? "default" : "outline"}
                       size="lg"
+                      className="text-sm md:text-base"
                     >
-                      1 minute
+                      1 min
                     </Button>
                   </div>
 
@@ -243,29 +246,29 @@ const Index = () => {
                         enableRegionSelect={true}
                         fixedDuration={selectedDuration}
                       />
-                      <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 border border-border">
-                        <div className="flex gap-8">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 rounded-lg bg-secondary/50 border border-border">
+                        <div className="grid grid-cols-3 gap-4 sm:gap-8 w-full sm:w-auto">
                           <div>
-                            <p className="text-sm text-muted-foreground mb-1">
+                            <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                               Start Time
                             </p>
-                            <p className="text-lg font-bold text-primary">
+                            <p className="text-base sm:text-lg font-bold text-primary">
                               {formatTime(startTime)}
                             </p>
                           </div>
                           <div>
-                            <p className="text-sm text-muted-foreground mb-1">
+                            <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                               End Time
                             </p>
-                            <p className="text-lg font-bold text-primary">
+                            <p className="text-base sm:text-lg font-bold text-primary">
                               {formatTime(endTime)}
                             </p>
                           </div>
                           <div>
-                            <p className="text-sm text-muted-foreground mb-1">
+                            <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                               Duration
                             </p>
-                            <p className="text-lg font-bold text-foreground">
+                            <p className="text-base sm:text-lg font-bold text-foreground">
                               {Math.abs(endTime - startTime).toFixed(1)}s
                             </p>
                           </div>
@@ -274,7 +277,7 @@ const Index = () => {
                           onClick={handleUpload}
                           disabled={isUploading}
                           size="lg"
-                          className="gap-2"
+                          className="gap-2 w-full sm:w-auto"
                         >
                           <Upload className="h-4 w-4" />
                           {isUploading ? "Uploading..." : "Upload & Continue"}
