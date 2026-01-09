@@ -6,9 +6,10 @@ interface FileUploadProps {
   onFileSelect: (file: File) => void;
   accept?: string;
   maxSize?: number;
+  supportedFormatsText?: string;
 }
 
-export const FileUpload = ({ onFileSelect, accept = 'audio/*', maxSize = 50 * 1024 * 1024 }: FileUploadProps) => {
+export const FileUpload = ({ onFileSelect, accept = 'audio/*', maxSize = 50 * 1024 * 1024, supportedFormatsText = 'MP3, WAV, OGG (max 50MB)' }: FileUploadProps) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -76,7 +77,7 @@ export const FileUpload = ({ onFileSelect, accept = 'audio/*', maxSize = 50 * 10
             Drag and drop or click to browse
           </p>
           <p className="mt-2 text-xs text-muted-foreground">
-            Supported formats: MP3, WAV, OGG (max 50MB)
+            Supported formats: {supportedFormatsText}
           </p>
         </div>
       </div>
