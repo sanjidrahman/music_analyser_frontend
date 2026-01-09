@@ -1,6 +1,6 @@
 // API service for music analyser backend
-// const API_BASE_URL = 'http://localhost:8000';
-const API_BASE_URL = 'https://music-analyser-backend.onrender.com';
+const API_BASE_URL = 'http://localhost:8000';
+// const API_BASE_URL = 'https://music-analyser-backend.onrender.com';
 
 // Helper function for making API requests
 const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
@@ -170,10 +170,13 @@ export const resultsAPI = {
 
 // Recording management endpoints
 export const recordingAPI = {
-  uploadRecording: async (file: File, segmentId: number) => {
+  uploadRecording: async (file: File, segmentId: number, fileType: 'recording' | 'audio', startTime?: number, endTime?: number) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('segment_id', segmentId.toString());
+    formData.append('file_type', fileType);
+    if (startTime !== undefined) formData.append('start_time', startTime.toString());
+    if (endTime !== undefined) formData.append('end_time', endTime.toString());
 
     return apiRequest('/api/recording/upload', {
       method: 'POST',
