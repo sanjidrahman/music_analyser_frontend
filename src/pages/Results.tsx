@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
-import { Award, RotateCcw, History, TrendingUp, Music2, Clock, Target, Play, Pause } from 'lucide-react';
+import { Award, RotateCcw, History, TrendingUp, Music2, Clock, Target, Play, Pause, AlertTriangle, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { resultsAPI, segmentsAPI, recordingAPI, API_BASE_URL } from '@/services/api';
 import {
@@ -21,6 +21,7 @@ interface PitchDataPoint {
   ref_pitch: number;
   user_pitch: number;
   difference_semitones: number;
+  user_singing: boolean;
 }
 
 interface DetailedAnalysis {
@@ -28,24 +29,39 @@ interface DetailedAnalysis {
     similarity: number;
     notes_matched: number;
     notes_total: number;
+    avg_semitone_error: number;
     pitch_over_time: PitchDataPoint[];
+    user_duration: number;
+    ref_duration: number;
   };
   rhythm: {
     similarity: number;
     tempo_difference: number;
     beat_alignment: number;
+    onset_correlation: number;
     ref_tempo: number;
     user_tempo: number;
   };
   timbre: {
     similarity: number;
+    frame_similarity: number;
+    overall_similarity: number;
   };
   timing: {
     similarity: number;
+    duration_similarity: number;
+    synchronization: number;
     ref_duration: number;
     user_duration: number;
     duration_difference: number;
   };
+}
+
+interface DurationWarning {
+  type: 'critical' | 'warning' | 'info';
+  message: string;
+  coverage: string;
+  recommendation: string;
 }
 
 interface AttemptResult {
@@ -59,6 +75,7 @@ interface AttemptResult {
   tone_similarity: number;
   timing_accuracy: number;
   detailed_analysis: DetailedAnalysis;
+  duration_warning: DurationWarning | null;
   analysis_version: string;
   created_at: string;
 }
@@ -74,6 +91,8 @@ interface SegmentInfo {
 interface RecordingInfo {
   id: number;
   file_path: string;
+  vocal_file_path: string;
+  duration: number;
 }
 
 const Results = () => {
@@ -159,7 +178,7 @@ const Results = () => {
         setPlayingSegment(false);
       }
 
-      const audio = new Audio(getAudioUrl(recording.file_path));
+      const audio = new Audio(getAudioUrl(recording.vocal_file_path || recording.file_path));
       audio.onended = () => setPlayingRecording(false);
       audio.play();
       setRecordingAudio(audio);
@@ -258,6 +277,45 @@ const Results = () => {
               </div>
             </div>
           </div>
+
+          {/* Duration Warning */}
+          {results.duration_warning && (
+            <div className={`rounded-xl border p-6 ${
+              results.duration_warning.type === 'critical'
+                ? 'border-destructive/50 bg-destructive/5'
+                : results.duration_warning.type === 'warning'
+                ? 'border-warning/50 bg-warning/5'
+                : 'border-primary/50 bg-primary/5'
+            }`}>
+              <div className="flex items-start gap-4">
+                <div className={`mt-1 ${
+                  results.duration_warning.type === 'critical'
+                    ? 'text-destructive'
+                    : results.duration_warning.type === 'warning'
+                    ? 'text-warning'
+                    : 'text-primary'
+                }`}>
+                  {results.duration_warning.type === 'critical' || results.duration_warning.type === 'warning' ? (
+                    <AlertTriangle className="h-6 w-6" />
+                  ) : (
+                    <Info className="h-6 w-6" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold mb-2 flex items-center gap-2">
+                    Duration Notice
+                    <span className="text-sm font-normal text-muted-foreground">
+                      ({results.duration_warning.coverage} coverage)
+                    </span>
+                  </h3>
+                  <p className="text-sm mb-2">{results.duration_warning.message}</p>
+                  <p className="text-sm text-muted-foreground italic">
+                    {results.duration_warning.recommendation}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Overall Score */}
           <div className="rounded-2xl border border-border bg-gradient-primary p-12 text-center">
@@ -407,25 +465,82 @@ const Results = () => {
           {/* Detailed Stats */}
           <div className="rounded-xl border border-border bg-gradient-card p-6">
             <h3 className="font-semibold mb-4">Detailed Statistics</h3>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Notes Matched</p>
                 <p className="text-2xl font-bold">
                   {results.detailed_analysis?.pitch?.notes_matched || 0} / {results.detailed_analysis?.pitch?.notes_total || 0}
                 </p>
+                <p className="text-xs text-muted-foreground mt-1">Higher is better</p>
               </div>
+
+              {results.detailed_analysis?.pitch?.avg_semitone_error !== undefined && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Avg Pitch Error</p>
+                  <p className="text-2xl font-bold">
+                    {results.detailed_analysis.pitch.avg_semitone_error.toFixed(2)} semitones
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Lower is better</p>
+                </div>
+              )}
+
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Tempo Difference</p>
                 <p className="text-2xl font-bold">
                   {results.detailed_analysis?.rhythm?.tempo_difference?.toFixed(1) || 0} BPM
                 </p>
+                <p className="text-xs text-muted-foreground mt-1">Lower is better</p>
               </div>
+
+              {results.detailed_analysis?.rhythm?.beat_alignment !== undefined && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Beat Alignment</p>
+                  <p className="text-2xl font-bold">
+                    {results.detailed_analysis.rhythm.beat_alignment.toFixed(1)}%
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Higher is better</p>
+                </div>
+              )}
+
+              {results.detailed_analysis?.rhythm?.ref_tempo !== undefined && results.detailed_analysis?.rhythm?.user_tempo !== undefined && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Tempo Comparison</p>
+                  <p className="text-lg font-bold">
+                    {results.detailed_analysis.rhythm.ref_tempo.toFixed(1)} BPM (ref)
+                  </p>
+                  <p className="text-lg font-bold">
+                    {results.detailed_analysis.rhythm.user_tempo.toFixed(1)} BPM (you)
+                  </p>
+                </div>
+              )}
+
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Duration Difference</p>
                 <p className="text-2xl font-bold">
                   {results.detailed_analysis?.timing?.duration_difference?.toFixed(1) || 0}s
                 </p>
+                <p className="text-xs text-muted-foreground mt-1">Lower is better</p>
               </div>
+
+              {results.detailed_analysis?.timing?.duration_similarity !== undefined && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Duration Similarity</p>
+                  <p className="text-2xl font-bold">
+                    {results.detailed_analysis.timing.duration_similarity.toFixed(1)}%
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Higher is better</p>
+                </div>
+              )}
+
+              {results.detailed_analysis?.timing?.synchronization !== undefined && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Synchronization</p>
+                  <p className="text-2xl font-bold">
+                    {results.detailed_analysis.timing.synchronization.toFixed(1)}%
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Higher is better</p>
+                </div>
+              )}
             </div>
           </div>
 
